@@ -3,6 +3,9 @@
 @@ -0,0 +0,0 @@
  package org.t246osslab.easybuggy.vulnerabilities;
  
+@@ -3,0 +3,2 @@
++import java.nio.file.Paths;
++import java.io.File;
  import java.awt.image.BufferedImage;
  import java.awt.image.WritableRaster;
  import java.io.File;
@@ -114,7 +117,17 @@
      private boolean reverseColor(String fileName) throws IOException {
          boolean isConverted = false;
          try {
-             BufferedImage image = ImageIO.read(new File(fileName));
+@@ -114,1 +116,9 @@
+-            BufferedImage image = ImageIO.read(new File(fileName));
++          BufferedImage image = null;
++          File file = new File(fileName);
++          String normalizedPath = file.getCanonicalPath();
++          if (normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
++              image = ImageIO.read(file);
++          } else {
++              throw new IOException("Attempt to read file outside of the base directory.");
++          }
++
              WritableRaster raster = image.getRaster();
              int[] pixelBuffer = new int[raster.getNumDataElements()];
              for (int y = 0; y < raster.getHeight(); y++) {
@@ -127,14 +140,7 @@
                  }
              }
              // Output the image
-@@ -127,1 +127,6 @@
--            ImageIO.write(image, "png", new File(fileName));
-+              ImageIO.write(image, "png", new File(fileName));
-+              String normalizedPath = new File(fileName).getCanonicalPath();
-+              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
-+                  throw new IOException("Error: Attempt to write file outside of the base directory.");
-+              }
-+
+             ImageIO.write(image, "png", new File(fileName));
              isConverted = true;
          } catch (Exception e) {
              // Log and ignore the exception
