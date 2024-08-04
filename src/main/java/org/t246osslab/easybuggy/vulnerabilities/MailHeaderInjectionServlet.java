@@ -1,5 +1,6 @@
 package org.t246osslab.easybuggy.vulnerabilities;
 
+import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -130,7 +131,12 @@ public class MailHeaderInjectionServlet extends AbstractServlet {
                         continue;
                     }
 
-                    File saveFile = new File(fileName);
+                      File saveFile = new File(fileName);
+                      String normalizedPath = saveFile.getCanonicalPath();
+                      if (!normalizedPath.startsWith(new File("./uploads").getCanonicalPath())) {
+                          return ResponseEntity.badRequest().body("Error: Attempt to save file outside of the base directory.");
+                      }
+
                     log.debug("Uploaded file is saved on: " + saveFile.getAbsolutePath());
                     FileOutputStream outputStream = null;
                     InputStream inputStream = null;
