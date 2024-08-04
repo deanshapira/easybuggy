@@ -83,19 +83,8 @@
                  doGet(req, res);
                  return;
              }
-@@ -81,1 +82,8 @@
--            boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
-+              boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
-+              String fullPath = savePath + File.separator + fileName;
-+              String normalizedPath = new File(fullPath).getCanonicalPath();
-+              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
-+                  req.setAttribute("errorMessage", "Error: Attempt to write file outside of the base directory.");
-+                  doGet(req, res);
-+                  return;
-+              }
+             boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
  
-@@ -83,0 +91,1 @@
-+
              if (!isConverted) {
                  isConverted = convert2GrayScale(new File(savePath + File.separator + fileName).getAbsolutePath());
              }
@@ -148,7 +137,14 @@
                  }
              }
              // Output the image
-             ImageIO.write(image, "png", new File(fileName));
+@@ -135,1 +136,6 @@
+-            ImageIO.write(image, "png", new File(fileName));
++              ImageIO.write(image, "png", new File(fileName));
++              String normalizedPath = new File(fileName).getCanonicalPath();
++              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
++                  throw new IOException("Error: Attempt to write file outside of the base directory.");
++              }
++
              isConverted = true;
          } catch (Exception e) {
              // Log and ignore the exception
