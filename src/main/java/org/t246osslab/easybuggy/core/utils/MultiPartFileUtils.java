@@ -1,5 +1,7 @@
 package org.t246osslab.easybuggy.core.utils;
 
+import java.nio.file.Paths;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,13 @@ public final class MultiPartFileUtils {
         OutputStream out = null;
         InputStream in = null;
         try {
-            out = new FileOutputStream(savePath + File.separator + fileName);
+              String fullPath = savePath + File.separator + fileName;
+              File file = new File(fullPath);
+              String normalizedPath = file.getCanonicalPath();
+              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
+                  throw new IOException("Error: Attempt to write file outside of the base directory.");
+              }
+              out = new FileOutputStream(file);
             in = part.getInputStream();
             int read;
             final byte[] bytes = new byte[1024];
