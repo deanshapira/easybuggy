@@ -78,29 +78,23 @@
              return;
          }
          try {
-@@ -76,6 +77,14 @@
--            String fileName = MultiPartFileUtils.getFileName(filePart);
--            if (StringUtils.isBlank(fileName)) {
--                doGet(req, res);
--                return;
--            }
+             String fileName = MultiPartFileUtils.getFileName(filePart);
+             if (StringUtils.isBlank(fileName)) {
+                 doGet(req, res);
+                 return;
+             }
+@@ -81,1 +82,8 @@
 -            boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
-+              String fileName = MultiPartFileUtils.getFileName(filePart);
-+              if (StringUtils.isBlank(fileName)) {
-+                  doGet(req, res);
-+                  return;
-+              }
-+              String fullPath = Paths.get(savePath, fileName).toString();
-+              File file = new File(fullPath);
-+              String normalizedPath = file.getCanonicalPath();
-+              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
-+                  req.setAttribute("errorMessage", "Error: Attempt to upload file outside of the base directory.");
-+                  doGet(req, res);
-+                  return;
-+              }
 +              boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
++              String fullPath = savePath + File.separator + fileName;
++              String normalizedPath = new File(fullPath).getCanonicalPath();
++              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
++                  req.setAttribute("errorMessage", "Error: Attempt to write file outside of the base directory.");
++                  doGet(req, res);
++                  return;
++              }
  
-@@ -83,0 +92,1 @@
+@@ -83,0 +91,1 @@
 +
              if (!isConverted) {
                  isConverted = convert2GrayScale(new File(savePath + File.separator + fileName).getAbsolutePath());
@@ -129,14 +123,7 @@
          boolean isConverted = false;
          try {
              // Convert the file into gray scale image.
-@@ -110,1 +120,6 @@
--            BufferedImage image = ImageIO.read(new File(fileName));
-+              BufferedImage image = ImageIO.read(new File(fileName));
-+              if (image == null) {
-+                  log.warn("Cannot read upload file as image file, file name: " + fileName);
-+                  return false;
-+              }
-+
+             BufferedImage image = ImageIO.read(new File(fileName));
              if (image == null) {
                  log.warn("Cannot read upload file as image file, file name: " + fileName);
                  return false;
