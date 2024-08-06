@@ -12,7 +12,7 @@
     "baseBranches": [],
     "snippetSize": 10,
     "enableRemediation": true
-  },
+  }, 
   "checkRunSettings": {
     "vulnerableCheckRunConclusionLevel": "failure",
     "displayMode": "diff",
