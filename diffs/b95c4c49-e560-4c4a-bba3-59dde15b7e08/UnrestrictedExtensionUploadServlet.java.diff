@@ -78,13 +78,30 @@
              return;
          }
          try {
-             String fileName = MultiPartFileUtils.getFileName(filePart);
-             if (StringUtils.isBlank(fileName)) {
-                 doGet(req, res);
-                 return;
-             }
-             boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
+@@ -76,6 +77,14 @@
+-            String fileName = MultiPartFileUtils.getFileName(filePart);
+-            if (StringUtils.isBlank(fileName)) {
+-                doGet(req, res);
+-                return;
+-            }
+-            boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
++              String fileName = MultiPartFileUtils.getFileName(filePart);
++              if (StringUtils.isBlank(fileName)) {
++                  doGet(req, res);
++                  return;
++              }
++              String fullPath = Paths.get(savePath, fileName).toString();
++              File file = new File(fullPath);
++              String normalizedPath = file.getCanonicalPath();
++              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
++                  req.setAttribute("errorMessage", "Error: Attempt to upload file outside of the base directory.");
++                  doGet(req, res);
++                  return;
++              }
++              boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
  
+@@ -83,0 +92,1 @@
++
              if (!isConverted) {
                  isConverted = convert2GrayScale(new File(savePath + File.separator + fileName).getAbsolutePath());
              }
@@ -112,7 +129,14 @@
          boolean isConverted = false;
          try {
              // Convert the file into gray scale image.
-             BufferedImage image = ImageIO.read(new File(fileName));
+@@ -110,1 +120,6 @@
+-            BufferedImage image = ImageIO.read(new File(fileName));
++              BufferedImage image = ImageIO.read(new File(fileName));
++              if (image == null) {
++                  log.warn("Cannot read upload file as image file, file name: " + fileName);
++                  return false;
++              }
++
              if (image == null) {
                  log.warn("Cannot read upload file as image file, file name: " + fileName);
                  return false;
@@ -137,14 +161,7 @@
                  }
              }
              // Output the image
-@@ -135,1 +136,6 @@
--            ImageIO.write(image, "png", new File(fileName));
-+              ImageIO.write(image, "png", new File(fileName));
-+              String normalizedPath = new File(fileName).getCanonicalPath();
-+              if (!normalizedPath.startsWith(new File(savePath).getCanonicalPath())) {
-+                  throw new IOException("Error: Attempt to write file outside of the base directory.");
-+              }
-+
+             ImageIO.write(image, "png", new File(fileName));
              isConverted = true;
          } catch (Exception e) {
              // Log and ignore the exception
