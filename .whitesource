@@ -29,7 +29,7 @@
   "issueSettingsSAST": {
     "minSeverityLevel": "high",
     "issueType": "repo"
-  },
+  }, 
   "remediateSettings": {
     "workflowRules": {
       "enabled": true
