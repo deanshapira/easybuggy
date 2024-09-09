@@ -18,4 +18,5 @@ public class ArrayStoreExceptionServlet extends AbstractServlet {
         Object[] objects = new String[1];
         objects[0] = Integer.valueOf(1);
     }
+    objects[0] = Integer.valueOf(2);
 }
