@@ -31,4 +31,5 @@ grant {
     permission javax.management.MBeanTrustPermission "register";
     permission javax.security.auth.AuthPermission "*";
     permission ognl.OgnlInvokePermission "*";
+s
 };
