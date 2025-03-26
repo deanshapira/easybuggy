@@ -3,14 +3,14 @@
     "configMode": "AUTO",
     "configExternalURL": "",
     "projectToken": "",
-    "baseBranches": []
+    "baseBranches": ["master", "integration"]
   },
   "scanSettingsSAST": {
     "enableScan": true,
     "scanPullRequests": true,
     "findingSuppressions": "enabled",
     "incrementalScan": true,
-    "baseBranches": [],
+    "baseBranches": ["master", "integration"],
     "snippetSize": 10,
     "enableRemediation": true
   }, 
