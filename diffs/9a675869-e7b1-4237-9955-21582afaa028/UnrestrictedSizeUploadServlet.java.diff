@@ -111,14 +111,14 @@
      // Reverse the color of the image file
      private boolean reverseColor(String fileName) throws IOException {
          boolean isConverted = false;
-+            File basePath = new File("./"); // Replace with the actual base path
-+            String canonicalPath = new File(fileName).getCanonicalPath();
-+            if (!canonicalPath.startsWith(basePath.getCanonicalPath())) {
+-        try {
+-            BufferedImage image = ImageIO.read(new File(fileName));
++            File basePath = new File(savePath).getCanonicalFile();
++            File fileToRead = new File(fileName).getCanonicalFile();
++            if (!fileToRead.getPath().startsWith(basePath.getPath())) {
 +                throw new IOException("Invalid file path");
 +            }
-+
-         try {
-             BufferedImage image = ImageIO.read(new File(fileName));
++            BufferedImage image = ImageIO.read(fileToRead);
              WritableRaster raster = image.getRaster();
              int[] pixelBuffer = new int[raster.getNumDataElements()];
              for (int y = 0; y < raster.getHeight(); y++) {
