@@ -74,19 +74,19 @@
              return;
          }
          try {
-             String fileName = MultiPartFileUtils.getFileName(filePart);
-             if (StringUtils.isBlank(fileName)) {
-                 doGet(req, res);
-                 return;
 +            String canonicalSavePath = new File(savePath).getCanonicalPath();
 +            String canonicalFilePath = new File(savePath + File.separator + fileName).getCanonicalPath();
 +            if (!canonicalFilePath.startsWith(canonicalSavePath)) {
 +                req.setAttribute("errorMessage", "Error: Attempt to write file outside of the base directory.");
 +                doGet(req, res);
 +                return;
-             }
-+
 +            }
++
+             String fileName = MultiPartFileUtils.getFileName(filePart);
+             if (StringUtils.isBlank(fileName)) {
+                 doGet(req, res);
+                 return;
+             }
              boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
  
              if (!isConverted) {
