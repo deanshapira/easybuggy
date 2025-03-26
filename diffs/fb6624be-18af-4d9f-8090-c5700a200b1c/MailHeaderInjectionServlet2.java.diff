@@ -135,7 +135,7 @@
 +                    String canonicalBasePath = new File(basePath).getCanonicalPath();
 +                    String canonicalFilePath = new File(fileName).getCanonicalPath();
 +                    if (!canonicalFilePath.startsWith(canonicalBasePath)) {
-+                        throw new SecurityException("Attempt to write outside of the base directory");
++                        throw new IOException("Invalid file path");
 +                    }
 +
                      File saveFile = new File(fileName);
